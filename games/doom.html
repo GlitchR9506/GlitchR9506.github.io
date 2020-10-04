@@ -24,7 +24,7 @@
         cycles: 1000,
         autolock: false,
     }).ready(function (fs, main) {
-      fs.extract("/zips/doom.zip").then(function () {
+      fs.extract("https://raw.githubusercontent.com/GlitchR9506/GlitchR9506.github.io/master/ZIPS/doom.ZIP").then(function () {
         main(["", "doom.exe"]).then(function (ci) {
             window.ci = ci;
         });
