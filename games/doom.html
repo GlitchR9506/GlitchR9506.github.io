@@ -24,8 +24,8 @@
         cycles: 1000,
         autolock: false,
     }).ready(function (fs, main) {
-      fs.extract("/zips/doom.EXE").then(function () {
-        main(["", "DooM.BAT"]).then(function (ci) {
+      fs.extract("/zips/doom.zip").then(function () {
+        main(["", "doom.exe"]).then(function (ci) {
             window.ci = ci;
         });
       });
