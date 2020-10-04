@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<style>
+html, body{
+overflow: hidden;
+background-color: #666666;
+}
+
+body{
+margin: 0;
+position: fixed;
+width: 100%;
+height: 100%;
+}
+canvas{
+width: 100%;
+height: 100%;
+}
+</style>
+<head>
+</head>
+<canvas id="can"></canvas>
+<script>
+
+var regen = 3;
+var underpop = 2;
+var overpop = 3;
+var pop=0;
+var cubemult = 10;//4 or 10?
+
+var last = performance.now() / 1000;
+var fpscap = 10;
+var fpsThreshold = 0;
+var c = document.getElementById("can");
+can.width = window.innerWidth;
+can.height = window.innerHeight;
+var ctx = c.getContext("2d");
+ctx.fillStyle = "#ffffff";
+var lifex = 16*cubemult;
+var lifey = 9*cubemult;
+//console.log(lifex);
+var ce = can.height/lifey;
+var afterlife = new Array();
+var life = new Array();
+for (var i = 0; i<lifex;i++){
+afterlife[i] = new Array();
+life[i] = new Array();
+for (var c = 0; c<lifey;c++){
+life[i][c] = Math.floor(Math.random()*2);
+afterlife[i][c] = 0;
+if(life[i][c] == 1){
+ctx.fillRect(i*ce,c*ce,ce,ce);
+}
+}
+}
+frame();
+var count = 0;
+var toggle = 0;
+function frame(){
+requestAnimationFrame(frame);
+var now = performance.now() / 1000;
+var dt = Math.min(now - last, 1);
+last = now;
+if (fpscap > 0) {
+fpsThreshold += dt;
+if (fpsThreshold < 1.0 / fpscap) {
+return;
+}
+fpsThreshold -= 1.0 / fpscap;
+}
+count++
+if(count >= 100){
+toggle = Math.floor(Math.random()*3)
+if(toggle == 1){
+underpop = Math.floor(Math.random()*3+1)
+regen = underpop+Math.floor(Math.random()*4+2);
+overpop = regen+Math.floor(Math.random()*1-1);
+}else{
+underpop = Math.floor(Math.random()*2+1)
+regen = underpop+Math.floor(Math.random()*1+1);
+overpop = regen+Math.floor(Math.random()*2+1);
+}
+
+count = 0;
+console.log("regen="+regen+" upop="+underpop+" opop="+overpop)
+if (pop == 0){
+for (var i = 0; i<lifex;i++){
+for (var c = 0; c<lifey;c++){
+life[i][c] = Math.floor(Math.random()*2);
+}
+}
+}
+}
+
+   
+pop = 0;
+draw();
+update();
+}
+function draw(){
+ctx.clearRect(0,0,can.width,can.height);
+for (var i = 0; i<lifex;i++){
+for (var c = 0; c<lifey;c++){
+if (life[i][c] == 1){
+ctx.fillRect(i*ce,c*ce,ce,ce);
+}
+}
+}
+}
+
+
+
+function update(){
+for (var i = 0; i<lifex;i++){
+for (var c = 0; c<lifey;c++){
+var neighbor = 0;
+for (var e = 1; e>-2;e--){
+for (var g = 1; g>-2;g--){
+if(( i + e )  >= 0 && (( i + e ) <= lifex - 1 ) && (( c + g ) >= 0 ) && (( c + g ) <= lifey - 1 ) && !( g == 0 && e == 0 )){
+neighbor+=life[i+e][c+g];
+}
+}
+}
+afterlife[i][c] = life[i][c];
+if(neighbor == regen){
+afterlife[i][c] = 1;
+}
+if(neighbor < underpop){
+afterlife[i][c] = 0;
+}
+if(neighbor > overpop){
+afterlife[i][c] = 0;
+}
+
+}
+}
+
+for (var i = 0; i<lifex;i++){
+for (var c = 0; c<lifey;c++){
+life[i][c] = afterlife[i][c];
+pop += afterlife[i][c];
+}
+}
+}
+
+
+
+</script>
+</html>
